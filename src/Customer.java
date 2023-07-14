@@ -56,7 +56,7 @@ public class Customer {
 
     // Getters and setters
     public String toString() {
-        return "Customer [id=" + id + ", name=" + name + ", email=" + email + ", address=" + address + ", phone="
+        return "Customer[id=" + id + ", name=" + name + ", email=" + email + ", address=" + address + ", phone="
                 + phone + "]";
     }
 }
