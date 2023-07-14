@@ -41,6 +41,21 @@ public class CustomerCRUD {
         }
     }
 
+    public void saveCustomer(Customer customer) {
+        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+            String query = "INSERT INTO customers (id, name, email, address, phone) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, customer.getId());
+            statement.setString(2, customer.getName());
+            statement.setString(3, customer.getEmail());
+            statement.setString(4, customer.getAddress());
+            statement.setString(5, customer.getPhone());
+            statement.executeUpdate();
+            System.out.println("Customer saved successfully.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
