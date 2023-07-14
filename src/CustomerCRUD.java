@@ -118,31 +118,31 @@ public class CustomerCRUD {
         }
         return customers;
     }
-//
-//    //GETTING CUSTOMER BY ID
-//    public Customer getCustomerById(int id) {
-//        Customer customer = null;
-//        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
-//            String query = "SELECT * FROM customers WHERE id = ?";
-//            PreparedStatement statement = conn.prepareStatement(query);
-//            statement.setInt(1, id);
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            if (resultSet.next()) {
-//                int customerId = resultSet.getInt("id");
-//                String name = resultSet.getString("name");
-//                String email = resultSet.getString("email");
-//                String address = resultSet.getString("address");
-//                String phone = resultSet.getString("phone");
-//
-//                customer = new Customer(customerId, name, email, address, phone);
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return customer;
-//    }
-//
+
+    //GETTING CUSTOMER BY ID
+    public Customer getCustomerById(int id) {
+        Customer customer = null;
+        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+            String query = "SELECT * FROM customers WHERE id = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                int customerId = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String address = resultSet.getString("address");
+                String phone = resultSet.getString("phone");
+
+                customer = new Customer(customerId, name, email, address, phone);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customer;
+    }
+
 //    public List<Customer> getCustomersByName(String name) {
 //        List<Customer> customers = new ArrayList<>();
 //        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
