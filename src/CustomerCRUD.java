@@ -78,25 +78,25 @@ public class CustomerCRUD {
         }
     }
 
-//
-//    public void deleteCustomer(int id) {
-//        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
-//            String query = "DELETE FROM customers WHERE id = ?";
-//            PreparedStatement statement = conn.prepareStatement(query);
-//            statement.setInt(1, id);
-//            int rowsDeleted = statement.executeUpdate();
-//
-//            if (rowsDeleted > 0) {
-//                System.out.println("Customer deleted successfully.");
-//            } else {
-//                System.out.println("No customer found with the given ID.");
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//
+
+    public void deleteCustomer(int id) {
+        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+            String query = "DELETE FROM customers WHERE id = ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setInt(1, id);
+            int rowsDeleted = statement.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                System.out.println("Customer deleted successfully.");
+            } else {
+                System.out.println("No customer found with the given ID.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 //    public List<Customer> getAllCustomers() {
 //        List<Customer> customers = new ArrayList<>();
 //        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
