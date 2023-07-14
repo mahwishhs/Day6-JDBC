@@ -143,28 +143,28 @@ public class CustomerCRUD {
         return customer;
     }
 
-//    public List<Customer> getCustomersByName(String name) {
-//        List<Customer> customers = new ArrayList<>();
-//        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
-//            String query = "SELECT * FROM customers WHERE name LIKE ?";
-//            PreparedStatement statement = conn.prepareStatement(query);
-//            statement.setString(1, "%" + name + "%");
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            while (resultSet.next()) {
-//                int id = resultSet.getInt("id");
-//                String customerName = resultSet.getString("name");
-//                String email = resultSet.getString("email");
-//                String address = resultSet.getString("address");
-//                String phone = resultSet.getString("phone");
-//
-//                Customer customer = new Customer(id, customerName, email, address, phone);
-//                customers.add(customer);
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return customers;
-//    }
+    public List<Customer> getCustomersByName(String name) {
+        List<Customer> customers = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+            String query = "SELECT * FROM customers WHERE name LIKE ?";
+            PreparedStatement statement = conn.prepareStatement(query);
+            statement.setString(1, "%" + name + "%");
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String customerName = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String address = resultSet.getString("address");
+                String phone = resultSet.getString("phone");
+
+                Customer customer = new Customer(id, customerName, email, address, phone);
+                customers.add(customer);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return customers;
+    }
 
 }
