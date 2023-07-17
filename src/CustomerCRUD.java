@@ -12,21 +12,19 @@ public class CustomerCRUD {
     private static final String DATABASE_NAME = "customer_db";
     private static final String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
 
-    private static HikariConfig config;
     private static HikariDataSource dataSource;
 
     static {
-        config = new HikariConfig();
+        HikariConfig config = new HikariConfig();
         config.setJdbcUrl(URL + DATABASE_NAME);
         config.setUsername(USERNAME);
         config.setPassword(PASSWORD);
         config.setDriverClassName(DRIVER_CLASS_NAME);
 
-        config.addDataSourceProperty("maximumPoolSize", "10");
+        config.setMaximumPoolSize(10);
 
         dataSource = new HikariDataSource(config);
     }
-
 
     public CustomerCRUD(HikariDataSource dataSource) {
         this.dataSource = dataSource;
@@ -35,8 +33,8 @@ public class CustomerCRUD {
     }
 
     private void createDatabase() {
-        try (Connection MySQLConn = dataSource.getConnection();
-             Statement statement = MySQLConn.createStatement()) {
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement()) {
             String sql = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             statement.executeUpdate(sql);
             System.out.println("Database created successfully.");
@@ -46,8 +44,8 @@ public class CustomerCRUD {
     }
 
     private void createTable() {
-        try (Connection MySQLConn = dataSource.getConnection();
-             Statement statement = MySQLConn.createStatement()) {
+        try (Connection connection = dataSource.getConnection();
+             Statement statement = connection.createStatement()) {
             String sql = "CREATE TABLE IF NOT EXISTS customers (" +
                     "id INT PRIMARY KEY," +
                     "name VARCHAR(255)," +
@@ -63,9 +61,9 @@ public class CustomerCRUD {
     }
 
     public void saveCustomer(Customer customer) throws SQLException {
-        try (Connection conn = dataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             String query = "INSERT INTO customers (id, name, email, address, phone) VALUES (?, ?, ?, ?, ?)";
-            PreparedStatement statement = conn.prepareStatement(query);
+            PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, customer.getId());
             statement.setString(2, customer.getName());
             statement.setString(3, customer.getEmail());
@@ -79,9 +77,9 @@ public class CustomerCRUD {
     }
 
     public void updateCustomer(Customer customer) {
-        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+        try (Connection connection = dataSource.getConnection()) {
             String query = "UPDATE customers SET name = ?, email = ?, address = ?, phone = ? WHERE id = ?";
-            PreparedStatement statement = conn.prepareStatement(query);
+            PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, customer.getName());
             statement.setString(2, customer.getEmail());
             statement.setString(3, customer.getAddress());
@@ -99,11 +97,10 @@ public class CustomerCRUD {
         }
     }
 
-
     public void deleteCustomer(int id) {
-        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+        try (Connection connection = dataSource.getConnection()) {
             String query = "DELETE FROM customers WHERE id = ?";
-            PreparedStatement statement = conn.prepareStatement(query);
+            PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
             int rowsDeleted = statement.executeUpdate();
 
@@ -117,12 +114,11 @@ public class CustomerCRUD {
         }
     }
 
-
     public List<Customer> getAllCustomers() {
         List<Customer> customers = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+        try (Connection connection = dataSource.getConnection()) {
             String query = "SELECT * FROM customers";
-            PreparedStatement statement = conn.prepareStatement(query);
+            PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
@@ -140,12 +136,11 @@ public class CustomerCRUD {
         return customers;
     }
 
-    //GETTING CUSTOMER BY ID
     public Customer getCustomerById(int id) {
         Customer customer = null;
-        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+        try (Connection connection = dataSource.getConnection()) {
             String query = "SELECT * FROM customers WHERE id = ?";
-            PreparedStatement statement = conn.prepareStatement(query);
+            PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
 
@@ -166,9 +161,9 @@ public class CustomerCRUD {
 
     public List<Customer> getCustomersByName(String name) {
         List<Customer> customers = new ArrayList<>();
-        try (Connection conn = dataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             String query = "SELECT * FROM customers WHERE name LIKE ?";
-            PreparedStatement statement = conn.prepareStatement(query);
+            PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, "%" + name + "%");
             ResultSet resultSet = statement.executeQuery();
 
@@ -187,6 +182,4 @@ public class CustomerCRUD {
         }
         return customers;
     }
-
-
 }

@@ -2,7 +2,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -47,9 +46,9 @@ public class Main {
 
         System.out.println("Customer saved successfully.");
 
-        try (Connection MySQLConn = DriverManager.getConnection("jdbc:mysql://localhost:3306/customer_db", "root", "Hello_123")) {
+        try (Connection connection = dataSource.getConnection()) {
             // Verify database connection
-            if (MySQLConn != null) {
+            if (connection != null) {
                 System.out.println("Connected to the database successfully.");
             } else {
                 System.out.println("Failed to connect to the database.");
@@ -58,7 +57,7 @@ public class Main {
 
             // Select the database
             String selectDBQuery = "USE customer_db";
-            Statement selectDBStatement = MySQLConn.createStatement();
+            Statement selectDBStatement = connection.createStatement();
             selectDBStatement.executeUpdate(selectDBQuery);
             System.out.println("Selected the 'customer_db' database.");
 
@@ -69,11 +68,14 @@ public class Main {
             customerCRUD.updateCustomer(updatedCustomer);
             System.out.println("Customer updated successfully.");
             System.out.println("------------");
+
+
             // Delete a customer
-            int customerIdToDelete = 2;
+            int customerIdToDelete = 14;
             customerCRUD.deleteCustomer(customerIdToDelete);
-            System.out.println("Customer deleted successfully.");
             System.out.println("------------");
+
+
             // Retrieve all customers
             List<Customer> allCustomers = customerCRUD.getAllCustomers();
             System.out.println("All Customers:");
@@ -82,8 +84,8 @@ public class Main {
             }
 
             System.out.println("------------");
-            int findCustomomerid = 4;
-            Customer infoCust = customerCRUD.getCustomerById(findCustomomerid);
+            int findCustomerId = 4;
+            Customer infoCust = customerCRUD.getCustomerById(findCustomerId);
             if (infoCust != null) {
                 System.out.println("Customer Found: " + infoCust);
             } else {
@@ -97,8 +99,6 @@ public class Main {
             for (Customer customer : customersByName) {
                 System.out.println(customer);
             }
-
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
