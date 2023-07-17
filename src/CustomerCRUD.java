@@ -1,3 +1,6 @@
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,15 +10,33 @@ public class CustomerCRUD {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "Hello_123";
     private static final String DATABASE_NAME = "customer_db";
+    private static final String DRIVER_CLASS_NAME = "com.mysql.cj.jdbc.Driver";
 
-    public CustomerCRUD() {
+    private static HikariConfig config;
+    private static HikariDataSource dataSource;
+
+    static {
+        config = new HikariConfig();
+        config.setJdbcUrl(URL + DATABASE_NAME);
+        config.setUsername(USERNAME);
+        config.setPassword(PASSWORD);
+        config.setDriverClassName(DRIVER_CLASS_NAME);
+
+        config.addDataSourceProperty("maximumPoolSize", "10");
+
+        dataSource = new HikariDataSource(config);
+    }
+
+
+    public CustomerCRUD(HikariDataSource dataSource) {
+        this.dataSource = dataSource;
         createDatabase();
         createTable();
     }
 
     private void createDatabase() {
-        try (Connection MySQLConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             Statement statement = MySQLConn.createStatement  ()) {
+        try (Connection MySQLConn = dataSource.getConnection();
+             Statement statement = MySQLConn.createStatement()) {
             String sql = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             statement.executeUpdate(sql);
             System.out.println("Database created successfully.");
@@ -25,7 +46,7 @@ public class CustomerCRUD {
     }
 
     private void createTable() {
-        try (Connection MySQLConn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD);
+        try (Connection MySQLConn = dataSource.getConnection();
              Statement statement = MySQLConn.createStatement()) {
             String sql = "CREATE TABLE IF NOT EXISTS customers (" +
                     "id INT PRIMARY KEY," +
@@ -41,8 +62,8 @@ public class CustomerCRUD {
         }
     }
 
-    public void saveCustomer(Customer customer) {
-        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+    public void saveCustomer(Customer customer) throws SQLException {
+        try (Connection conn = dataSource.getConnection()) {
             String query = "INSERT INTO customers (id, name, email, address, phone) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setInt(1, customer.getId());
@@ -145,7 +166,7 @@ public class CustomerCRUD {
 
     public List<Customer> getCustomersByName(String name) {
         List<Customer> customers = new ArrayList<>();
-        try (Connection conn = DriverManager.getConnection(URL + DATABASE_NAME, USERNAME, PASSWORD)) {
+        try (Connection conn = dataSource.getConnection()) {
             String query = "SELECT * FROM customers WHERE name LIKE ?";
             PreparedStatement statement = conn.prepareStatement(query);
             statement.setString(1, "%" + name + "%");
@@ -166,5 +187,6 @@ public class CustomerCRUD {
         }
         return customers;
     }
+
 
 }
